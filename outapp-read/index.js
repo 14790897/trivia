@@ -13,19 +13,34 @@
 
   let counter = 1;
   let intervalId;
-
+  function simulateHumanInput(inputElement, text) {
+    inputElement.focus();
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      "value"
+    ).set;
+    for (const character of text) {
+      nativeInputValueSetter.call(inputElement, inputElement.value + character);
+      inputElement.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
   function performAction() {
-    const inputField = Array.from(document.querySelectorAll("input")).find(
-      (el) => el.placeholder.includes("Share out your thoughts")
+    // const inputField = Array.from(document.querySelectorAll("input")).find(
+    //   (el) => el.placeholder.includes("Share out your thoughts")
+    // );
+    const inputField = document.querySelector(
+      "body > main > div > div.min-h-screen.h-screen.overflow-hidden.flex.flex-col > div > div.flex-1.w-full.scroller > div > div > div.w-full.max-outmd\\:pb-16 > div.flex.flex-col.items-start.w-full.font-inter > div.flex.relative.items-start.gap-1\\.5.w-full.font-inter.border-b.border-outstroke-soft > form > div > div.p-4.flex.items-start.gap-2 > div.flex.flex-col.w-full"
     );
-
-    const replyButton = Array.from(document.querySelectorAll("span")).find(
-      (el) => el.innerText.includes("Reply")
+    console.log(inputField);
+    // const replyButton = Array.from(document.querySelectorAll("span")).find(
+    //   (el) => el.innerText.includes("Reply")
+    // );
+    const replyButton = document.querySelector(
+      "body > main > div > div.min-h-screen.h-screen.overflow-hidden.flex.flex-col > div > div.flex-1.w-full.scroller > div > div > div.w-full.max-outmd\\:pb-16 > div.flex.flex-col.items-start.w-full.font-inter > div.flex.relative.items-start.gap-1\\.5.w-full.font-inter.border-b.border-outstroke-soft > form > div > div.flex.items-center.justify-end.py-3 > div > button"
     );
-
     if (inputField && replyButton) {
       console.log(`Entering "thanks ${counter}" in the input field.`);
-      inputField.value = `thanks ${counter}`;
+      simulateHumanInput(inputField, `thanks ${counter}`);
       counter++;
       console.log('Clicking the "Reply" button.');
       replyButton.click();
@@ -42,7 +57,9 @@
     intervalId = setInterval(performAction, 1000);
   }
 
-  startInterval();
+  window.onload = function () {
+    startInterval();
+  };
 
   window.stopInterval = function () {
     console.log("Stopping interval...");
